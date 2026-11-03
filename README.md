@@ -1,2 +1,5 @@
 # calculator
-just a regular calculator in js
+
+Reverse engineered Windows 11 calculator.
+
+It's a joke..
