@@ -2,6 +2,8 @@ let operandA;
 let operandB;
 let operator;
 
+const buttons = document.querySelector(".buttons");
+
 function operate(operandA, operator, operandB) {
   switch (operator) {
     case "add":
