@@ -1,24 +1,31 @@
-let operandA;
-let operandB;
+let operandA = 0;
+let operandB = 0;
 let operator;
 let isEqualPressed = false;
 
 const buttons = document.querySelector(".buttons");
 
 buttons.addEventListener("click", (e) => {
-  console.log(e.target.className);
+  // console.log(e.target.className);
   switch (e.target.className) {
     case "operandBtn":
       // console.log(e.target.textContent);
       if (!operator) {
-        operandA = e.target.textContent;
+        operandA == "0"
+          ? (operandA = e.target.textContent)
+          : (operandA += e.target.textContent);
+        // operandA += e.target.textContent;
+        updateResultScreen(operandA);
       } else {
-        operandB = e.target.textContent;
+        operandB == "0"
+          ? (operandB = e.target.textContent)
+          : (operandB += e.target.textContent);
+        updateResultScreen(operandB);
       }
       break;
 
     case "operatorBtn":
-      console.log(e.target.textContent);
+      // console.log(e.target.textContent);
       if (operandA) {
         operator = e.target.textContent;
       } else {
@@ -29,9 +36,14 @@ buttons.addEventListener("click", (e) => {
       break;
 
     case "equalBtn":
+      if (!operandB) {
+        operandB = result.textContent;
+      }
       isEqualPressed = true;
       updateOperationScreen();
-      // call operate and calculate
+
+      const answer = operate();
+      updateResultScreen(answer);
       break;
     default:
       break;
@@ -48,27 +60,45 @@ function updateOperationScreen() {
   }
 }
 
+const result = document.querySelector(".operationResult");
+console.log(result);
+function updateResultScreen(value) {
+  result.textContent = value;
+
+  let fontSize = 46;
+  result.style.fontSize = `${fontSize}px`;
+
+  while (result.scrollWidth > result.clientWidth && fontSize > 18) {
+    fontSize -= 2;
+    result.style.fontSize = `${fontSize}px`;
+  }
+}
+
 const clearBtns = document.querySelectorAll(".clearBtn");
 clearBtns.forEach((btn) => {
   btn.addEventListener("click", () => {
     operation.textContent = "";
-    operandA = null;
-    operandB = null;
+    result.textContent = 0;
+    operandA = 0;
+    operandB = 0;
     operator = null;
     isEqualPressed = false;
   });
 });
 
-function operate(operandA, operator, operandB) {
+function operate() {
+  const numA = Number(operandA);
+  const numB = Number(operandB);
+
   switch (operator) {
-    case "add":
-      return add(operandA, operandB);
-    case "subtract":
-      return subtract(operandA, operandB);
-    case "multiply":
-      return multiply(operandA, operandB);
-    case "divide":
-      return divide(operandA, operandB);
+    case "+":
+      return add(numA, numB);
+    case "-":
+      return subtract(numA, numB);
+    case "x":
+      return multiply(numA, numB);
+    case "÷":
+      return divide(numA, numB);
   }
 }
 

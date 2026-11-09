@@ -55,9 +55,17 @@ body {
   font-size: 14px;
 }
 
-.screen .opreation-result {
+.screen .operationResult {
   font-size: 46px;
   font-weight: bolder;
+  width: 100%;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
+  /* white-space: nowrap; */
+  /* text-fit: shrink; */
+  /* text-size-adjust: auto; */
 }
 
 .buttons {
