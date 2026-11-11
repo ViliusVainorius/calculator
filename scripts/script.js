@@ -2,30 +2,41 @@ let operandA = 0;
 let operandB = 0;
 let operator;
 let isEqualPressed = false;
+const defaultResultFontSize = 46;
 
 const buttons = document.querySelector(".buttons");
 
 buttons.addEventListener("click", (e) => {
-  // console.log(e.target.className);
   switch (e.target.className) {
     case "operandBtn":
-      // console.log(e.target.textContent);
+      if (isEqualPressed) {
+        clear();
+      }
+
       if (!operator) {
-        operandA == "0"
+        operandA == "0" && e.target.id != "commaBtn"
           ? (operandA = e.target.textContent)
-          : (operandA += e.target.textContent);
-        // operandA += e.target.textContent;
+          : operandA.length < 16
+            ? (operandA += e.target.textContent)
+            : (operandA = operandA);
         updateResultScreen(operandA);
       } else {
         operandB == "0"
           ? (operandB = e.target.textContent)
-          : (operandB += e.target.textContent);
+          : operandB.length < 16
+            ? (operandB += e.target.textContent)
+            : (operandB = operandB);
         updateResultScreen(operandB);
       }
       break;
 
     case "operatorBtn":
-      // console.log(e.target.textContent);
+      if (isEqualPressed) {
+        operandA = result.textContent;
+        operandB = 0;
+        isEqualPressed = false;
+      }
+
       if (operandA) {
         operator = e.target.textContent;
       } else {
@@ -36,6 +47,9 @@ buttons.addEventListener("click", (e) => {
       break;
 
     case "equalBtn":
+      if (!operator) {
+        break;
+      }
       if (!operandB) {
         operandB = result.textContent;
       }
@@ -61,11 +75,10 @@ function updateOperationScreen() {
 }
 
 const result = document.querySelector(".operationResult");
-console.log(result);
 function updateResultScreen(value) {
-  result.textContent = value;
+  result.textContent = visualize(value);
 
-  let fontSize = 46;
+  let fontSize = defaultResultFontSize;
   result.style.fontSize = `${fontSize}px`;
 
   while (result.scrollWidth > result.clientWidth && fontSize > 18) {
@@ -74,32 +87,65 @@ function updateResultScreen(value) {
   }
 }
 
+function visualize(value) {
+  const [integerPart, decimalPart] = value.split(",");
+
+  let formattedInteger = "";
+
+  for (let i = integerPart.length; i > 0; i -= 3) {
+    const start = Math.max(0, i - 3);
+    const chunk = integerPart.slice(start, i);
+    formattedInteger = chunk + (formattedInteger ? " " + formattedInteger : "");
+  }
+
+  if (decimalPart !== undefined) {
+    return formattedInteger + "," + decimalPart;
+  }
+
+  return formattedInteger;
+}
+
 const clearBtns = document.querySelectorAll(".clearBtn");
 clearBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    operation.textContent = "";
-    result.textContent = 0;
-    operandA = 0;
-    operandB = 0;
-    operator = null;
-    isEqualPressed = false;
-  });
+  btn.addEventListener("click", () => clear());
 });
 
+function clear() {
+  operation.textContent = "";
+  result.textContent = 0;
+  operandA = 0;
+  operandB = 0;
+  operator = null;
+  isEqualPressed = false;
+  result.style.fontSize = `${defaultResultFontSize}px`;
+}
+
 function operate() {
-  const numA = Number(operandA);
-  const numB = Number(operandB);
+  const numA = Number(
+    operandA.toString().replaceAll(" ", "").replace(",", "."),
+  );
+  const numB = Number(
+    operandB.toString().replaceAll(" ", "").replace(",", "."),
+  );
+
+  let answer = 0;
 
   switch (operator) {
     case "+":
-      return add(numA, numB);
+      answer = add(numA, numB);
+      break;
     case "-":
-      return subtract(numA, numB);
+      answer = subtract(numA, numB);
+      break;
     case "x":
-      return multiply(numA, numB);
+      answer = multiply(numA, numB);
+      break;
     case "÷":
-      return divide(numA, numB);
+      answer = divide(numA, numB);
+      break;
   }
+
+  return Number(answer.toFixed(10)).toString().replace(".", ",");
 }
 
 function add(a, b) {
