@@ -14,18 +14,10 @@ buttons.addEventListener("click", (e) => {
       }
 
       if (!operator) {
-        operandA == "0" && e.target.id != "commaBtn"
-          ? (operandA = e.target.textContent)
-          : operandA.length < 16
-            ? (operandA += e.target.textContent)
-            : (operandA = operandA);
+        assignOperandA(e);
         updateResultScreen(operandA);
       } else {
-        operandB == "0"
-          ? (operandB = e.target.textContent)
-          : operandB.length < 16
-            ? (operandB += e.target.textContent)
-            : (operandB = operandB);
+        assignOperandB(e);
         updateResultScreen(operandB);
       }
       break;
@@ -64,6 +56,32 @@ buttons.addEventListener("click", (e) => {
   }
 });
 
+function assignOperandA(e) {
+  if (e.target.id == "commaBtn") {
+    operandA += e.target.textContent;
+    return;
+  }
+
+  if (operandA == "0") {
+    operandA = e.target.textContent;
+  } else if (operandA.length < 16) {
+    operandA += e.target.textContent;
+  }
+}
+
+function assignOperandB(e) {
+  if (e.target.id == "commaBtn") {
+    operandB += e.target.textContent;
+    return;
+  }
+
+  operandB == "0"
+    ? (operandB = e.target.textContent)
+    : operandB.length < 16
+      ? (operandB += e.target.textContent)
+      : (operandB = operandB);
+}
+
 const operation = document.querySelector(".operation");
 
 function updateOperationScreen() {
@@ -88,7 +106,7 @@ function updateResultScreen(value) {
 }
 
 function visualize(value) {
-  const [integerPart, decimalPart] = value.split(",");
+  const [integerPart, decimalPart] = value.toString().split(",");
 
   let formattedInteger = "";
 
